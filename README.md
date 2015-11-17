@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/reactbits/make-reducer.svg)](https://travis-ci.org/reactbits/make-reducer)
+
 # make-reducer
 
 Functions to easily build redux reducers without boilerplate code.
