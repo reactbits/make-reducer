@@ -1,10 +1,10 @@
-export default function makeReducer() {
+export default function makeReducer(initialState) {
 	const transitions = {};
 
-	const reducer = function(state, action) {
+	const reducer = function reducer(state = initialState, action) {
 		const fn = transitions[action.type];
 		if (!fn) {
-			return fn;
+			return state;
 		}
 		return fn(state, action.data);
 	};
