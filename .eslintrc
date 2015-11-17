@@ -1,0 +1,18 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+
+  rules: {
+  	"id-length": 0,
+  	"indent": [2, "tab"],
+  	"no-console": 0,
+  	"func-names": 0
+  }
+}

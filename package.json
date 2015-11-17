@@ -1,0 +1,35 @@
+{
+  "name": "make-reducer",
+  "version": "0.1.0",
+  "description": "Functions to easily build redux reducers without boilerplate code.",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint --ext .js src",
+    "babel": "babel src --out-dir lib",
+    "test": "npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reactbits/make-reducer.git"
+  },
+  "keywords": [
+    "redux",
+    "reducer"
+  ],
+  "author": "Sergey Todyshev <stodyshev@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reactbits/make-reducer/issues"
+  },
+  "homepage": "https://github.com/reactbits/make-reducer#readme",
+  "devDependencies": {
+    "babel": "^6.1.5",
+    "babel-core": "^6.1.4",
+    "babel-eslint": "^4.1.5",
+    "babel-preset-es2015": "^6.0.15",
+    "babel-preset-stage-0": "^6.1.2",
+    "eslint": "^1.8.0",
+    "eslint-config-airbnb": "^1.0.0",
+    "eslint-plugin-react": "^3.7.1"
+  }
+}
