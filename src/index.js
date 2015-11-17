@@ -10,7 +10,21 @@ export default function makeReducer(initialState) {
 	};
 
 	reducer.add = function(type, transition) {
+		if (typeof(type) == 'function') {
+			transition = type;
+			type = transition.name;
+		}
+
+		if (!type) {
+			throw new Error('action type is not defined');
+		}
+
+		if (typeof(transition) !== 'function') {
+			throw new Error('transition is not a function');
+		}
+
 		transitions[type] = transition;
+
 		return function(data) {
 			return {
 				type: type,
