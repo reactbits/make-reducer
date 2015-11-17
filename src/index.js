@@ -29,7 +29,7 @@ export default function makeReducer(initialState) {
 	 * @returns {function} A function to create action (aka action creator).
 	 */
 	reducer.add = function(type, transition) {
-		if (typeof(type) == 'function') {
+		if (typeof type === 'function') {
 			transition = type;
 			type = transition.name;
 		}
@@ -38,7 +38,7 @@ export default function makeReducer(initialState) {
 			throw new Error('action type is not defined');
 		}
 
-		if (typeof(transition) !== 'function') {
+		if (typeof transition !== 'function') {
 			throw new Error('transition is not a function');
 		}
 
