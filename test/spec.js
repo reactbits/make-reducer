@@ -10,7 +10,7 @@ describe("with makeReducer", () => {
 		const increment = reducer.add('INCREMENT', (counter) => counter + 1);
 		const decrement = reducer.add('DECREMENT', (counter) => counter - 1);
 
-		const store = createStore(reducer);
+		const store = createStore(reducer, initialState);
 
 		store.dispatch(increment());
 		expect(store.getState()).to.be(1);
@@ -26,7 +26,7 @@ describe("with makeReducer", () => {
 		const increment = reducer.add(function INCREMENT(counter) { return counter + 1; });
 		const decrement = reducer.add(function DECREMENT(counter) { return counter - 1; });
 
-		const store = createStore(reducer);
+		const store = createStore(reducer, initialState);
 
 		store.dispatch(increment());
 		expect(store.getState()).to.be(1);
@@ -38,7 +38,7 @@ describe("with makeReducer", () => {
 	it("reducer should not change state if action type is unknown", () => {
 		const initialState = -1;
 		const reducer = makeReducer(initialState);
-		const store = createStore(reducer);
+		const store = createStore(reducer, initialState);
 		store.dispatch({type: '@@unknown'});
 		expect(store.getState()).to.be(initialState);
 	});

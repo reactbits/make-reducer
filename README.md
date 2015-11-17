@@ -13,7 +13,7 @@ const reducer = makeReducer(initialState);
 const increment = reducer.add('INCREMENT', (counter) => counter + 1);
 const decrement = reducer.add('DECREMENT', (counter) => counter - 1);
 
-const store = createStore(reducer);
+const store = createStore(reducer, initialState);
 
 store.dispatch(increment());
 store.dispatch(decrement());
@@ -28,7 +28,7 @@ const reducer = makeReducer(initialState);
 const increment = reducer.add(function INCREMENT(counter) { return counter + 1; });
 const decrement = reducer.add(function DECREMENT(counter) { return counter - 1; });
 
-const store = createStore(reducer);
+const store = createStore(reducer, initialState);
 
 store.dispatch(increment());
 store.dispatch(decrement());
