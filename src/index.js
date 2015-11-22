@@ -1,5 +1,5 @@
 function identity(t) {
-  return t;
+	return t;
 }
 
 /**
@@ -57,20 +57,20 @@ export default function makeReducer(initialState) {
 
 		return (...args) => {
 			const action = {
-	      type,
-	      payload: makeAction(...args),
-	    };
+				type,
+				payload: makeAction(...args),
+			};
 
-	    if (args.length === 1 && args[0] instanceof Error) {
-	      // Handle FSA errors where the payload is an Error object. Set error.
-	      action.error = true;
-	    }
+			if (args.length === 1 && args[0] instanceof Error) {
+				// Handle FSA errors where the payload is an Error object. Set error.
+				action.error = true;
+			}
 
-	    if (hasMeta) {
-	      action.meta = metaCreator(...args);
-	    }
+			if (hasMeta) {
+				action.meta = metaCreator(...args);
+			}
 
-	    return action;
+			return action;
 		};
 	};
 
