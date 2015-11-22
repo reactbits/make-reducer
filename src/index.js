@@ -1,3 +1,7 @@
+function identity(t) {
+  return t;
+}
+
 /**
  * Creates reducer function that returns the next state tree, given
  * the current state tree and the action to handle.
@@ -14,7 +18,7 @@ export default function makeReducer(initialState) {
 		if (!fn) {
 			return state;
 		}
-		return fn(state, action.data);
+		return fn(state, action.payload, action.error);
 	};
 
 	/**
@@ -26,9 +30,13 @@ export default function makeReducer(initialState) {
 	 *
 	 * @param {function} [transition] (optional) A function to handle the action type.
 	 *
+	 * @param {function} [actionCreator] (optional) A custom function to create action.
+	 *
+	 * @param {function} [metaCreator] (optional) A function to create action metadata.
+	 *
 	 * @returns {function} A function to create action (aka action creator).
 	 */
-	reducer.add = function(type, transition) {
+	reducer.add = function(type, transition, actionCreator, metaCreator) {
 		if (typeof type === 'function') {
 			transition = type;
 			type = transition.name;
@@ -42,13 +50,27 @@ export default function makeReducer(initialState) {
 			throw new Error('transition is not a function');
 		}
 
+		const makeAction = typeof actionCreator === 'function' ? actionCreator : identity;
+		const hasMeta = typeof metaCreator === 'function';
+
 		transitions[type] = transition;
 
-		return function(data) {
-			return {
-				type: type,
-				data: data,
-			};
+		return (...args) => {
+			const action = {
+	      type,
+	      payload: makeAction(...args),
+	    };
+
+	    if (args.length === 1 && args[0] instanceof Error) {
+	      // Handle FSA errors where the payload is an Error object. Set error.
+	      action.error = true;
+	    }
+
+	    if (hasMeta) {
+	      action.meta = metaCreator(...args);
+	    }
+
+	    return action;
 		};
 	};
 
