@@ -8,9 +8,11 @@ function identity(t) {
  *
  * @param {any} [initialState] The initial state.
  *
+ * @param {string} [actionTypePrefix] The prefix for all actions registered in this reducer.
+ *
  * @returns {function} A reducer function to use with Redux store.
  */
-export default function makeReducer(initialState) {
+export default function makeReducer(initialState, actionTypePrefix = '') {
 	const transitions = {};
 
 	const reducer = function reducer(state = initialState, action) {
@@ -30,13 +32,13 @@ export default function makeReducer(initialState) {
 	 *
 	 * @param {function} [transition] (optional) A function to handle the action type.
 	 *
-	 * @param {function} [actionCreator] (optional) A custom function to create action.
+	 * @param {function} [payloadReducer] (optional) A function to transform multiple arguments as a unique payload.
 	 *
-	 * @param {function} [metaCreator] (optional) A function to create action metadata.
+	 * @param {function} [metaCreator] (optional) A function to transform multiple arguments as a unique metadata object.
 	 *
 	 * @returns {function} A function to create action (aka action creator).
 	 */
-	reducer.add = function(type, transition, actionCreator, metaCreator) {
+	reducer.add = function(type, transition, payloadReducer = identity, metaReducer) {
 		if (typeof type === 'function') {
 			transition = type;
 			type = transition.name;
@@ -50,15 +52,15 @@ export default function makeReducer(initialState) {
 			throw new Error('transition is not a function');
 		}
 
-		const makeAction = typeof actionCreator === 'function' ? actionCreator : identity;
-		const hasMeta = typeof metaCreator === 'function';
+		type = actionTypePrefix + type;
+		const hasMeta = typeof metaReducer === 'function';
 
 		transitions[type] = transition;
 
 		return (...args) => {
 			const action = {
 				type,
-				payload: makeAction(...args),
+				payload: payloadReducer(...args),
 			};
 
 			if (args.length === 1 && args[0] instanceof Error) {
@@ -67,7 +69,7 @@ export default function makeReducer(initialState) {
 			}
 
 			if (hasMeta) {
-				action.meta = metaCreator(...args);
+				action.meta = metaReducer(...args);
 			}
 
 			return action;

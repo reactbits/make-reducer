@@ -42,4 +42,16 @@ describe("with makeReducer", () => {
 		store.dispatch({type: '@@unknown'});
 		expect(store.getState()).to.be(initialState);
 	});
+
+	it("custom payload", () => {
+
+		const initialState = '';
+		const reducer = makeReducer(initialState, '@@internal/');
+		const concat = reducer.add('concat', (state, s) => state + s, (...args) => args.join(','));
+
+		const store = createStore(reducer, initialState);
+
+		store.dispatch(concat('a', 'b', 'c'));
+		expect(store.getState()).to.be('a,b,c');
+	});
 });
