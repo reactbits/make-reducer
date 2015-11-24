@@ -38,7 +38,7 @@ export default function makeReducer(initialState, actionTypePrefix = '') {
 	 *
 	 * @returns {function} A function to create action (aka action creator).
 	 */
-	reducer.add = function(type, transition, payloadReducer = identity, metaReducer) {
+	reducer.on = function(type, transition, payloadReducer = identity, metaReducer) {
 		if (typeof type === 'function') {
 			transition = type;
 			type = transition.name;
@@ -75,6 +75,9 @@ export default function makeReducer(initialState, actionTypePrefix = '') {
 			return action;
 		};
 	};
+
+	// TODO remove or deprecate this API
+	reducer.add = reducer.on;
 
 	return reducer;
 }

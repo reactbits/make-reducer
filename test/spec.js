@@ -7,8 +7,8 @@ describe("with makeReducer", () => {
 
 		const initialState = 0;
 		const reducer = makeReducer(initialState);
-		const increment = reducer.add('INCREMENT', (counter) => counter + 1);
-		const decrement = reducer.add('DECREMENT', (counter) => counter - 1);
+		const increment = reducer.on('INCREMENT', (counter) => counter + 1);
+		const decrement = reducer.on('DECREMENT', (counter) => counter - 1);
 
 		const store = createStore(reducer, initialState);
 
@@ -23,8 +23,8 @@ describe("with makeReducer", () => {
 
 		const initialState = 0;
 		const reducer = makeReducer(initialState);
-		const increment = reducer.add(function INCREMENT(counter) { return counter + 1; });
-		const decrement = reducer.add(function DECREMENT(counter) { return counter - 1; });
+		const increment = reducer.on(function INCREMENT(counter) { return counter + 1; });
+		const decrement = reducer.on(function DECREMENT(counter) { return counter - 1; });
 
 		const store = createStore(reducer, initialState);
 
@@ -47,7 +47,7 @@ describe("with makeReducer", () => {
 
 		const initialState = '';
 		const reducer = makeReducer(initialState, '@@internal/');
-		const concat = reducer.add('concat', (state, s) => state + s, (...args) => args.join(','));
+		const concat = reducer.on('concat', (state, s) => state + s, (...args) => args.join(','));
 
 		const store = createStore(reducer, initialState);
 
