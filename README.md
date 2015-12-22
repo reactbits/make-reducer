@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/reactbits/make-reducer.svg)](https://travis-ci.org/reactbits/make-reducer)
+[![codecov.io](https://codecov.io/github/reactbits/make-reducer/coverage.svg?branch=master)](https://codecov.io/github/reactbits/make-reducer?branch=master)
 
 # make-reducer
 
