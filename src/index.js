@@ -38,7 +38,7 @@ export default function makeReducer(initialState, actionTypePrefix = '') {
 	 *
 	 * @returns {function} A function to create action (aka action creator).
 	 */
-	reducer.on = function(type, transition, payloadReducer = identity, metaReducer) {
+	reducer.on = function on(type, transition, payloadReducer = identity, metaReducer) {
 		if (typeof type === 'function') {
 			transition = type;
 			type = transition.name;
