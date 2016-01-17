@@ -1,6 +1,7 @@
 [![npm version](https://badge.fury.io/js/make-reducer.svg)](https://badge.fury.io/js/make-reducer)
 [![Build Status](https://travis-ci.org/reactbits/make-reducer.svg)](https://travis-ci.org/reactbits/make-reducer)
 [![codecov.io](https://codecov.io/github/reactbits/make-reducer/coverage.svg?branch=master)](https://codecov.io/github/reactbits/make-reducer?branch=master)
+[![Total downloads](https://img.shields.io/npm/dt/make-reducer.svg)](https://www.npmjs.com/package/make-reducer)
 
 # make-reducer
 
