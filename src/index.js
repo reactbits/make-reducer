@@ -1,3 +1,5 @@
+import snakeCase from 'snake-case';
+
 function identity(t) {
 	return t;
 }
@@ -7,12 +9,12 @@ function identity(t) {
  * the current state tree and the action to handle.
  *
  * @param {any} [initialState] The initial state.
- *
+ * @param {object} [handlers] The handler map to register.
  * @param {string} [actionTypePrefix] The prefix for all actions registered in this reducer.
  *
  * @returns {function} A reducer function to use with Redux store.
  */
-export default function makeReducer(initialState, actionTypePrefix = '') {
+export default function makeReducer(initialState, handlers = {}, actionTypePrefix = '') {
 	const transitions = {};
 
 	const reducer = function reducer(state = initialState, action) {
@@ -41,7 +43,10 @@ export default function makeReducer(initialState, actionTypePrefix = '') {
 	reducer.on = function on(type, transition, payloadReducer = identity, metaReducer) {
 		if (typeof type === 'function') {
 			transition = type;
-			type = transition.name;
+			if (!transition.name) {
+				throw new Error('unexpected anonymous transition function');
+			}
+			type = snakeCase(transition.name).toUpperCase();
 		}
 
 		if (!type) {
@@ -78,6 +83,15 @@ export default function makeReducer(initialState, actionTypePrefix = '') {
 
 	// TODO remove or deprecate this API
 	reducer.add = reducer.on;
+
+	if (typeof handlers === 'object') {
+		Object.keys(handlers).forEach(name => {
+			const value = handlers[name];
+			if (typeof value !== 'function') return;
+			const type = snakeCase(name).toUpperCase();
+			reducer.on(type, value);
+		});
+	}
 
 	return reducer;
 }
