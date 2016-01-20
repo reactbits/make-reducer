@@ -10,11 +10,10 @@
   },
 
   "rules": {
-  	"id-length": 0,
-  	"indent": [2, "tab"],
-  	"no-console": 0,
-  	"no-param-reassign": 0,
-  	"func-names": 0,
-		"max-len": [2, 100, 2, {"ignoreComments":true, "ignoreUrls": true}]
+    "id-length": 0,
+    "indent": [2, "tab"],
+    "no-console": 0,
+    "func-names": 0,
+    "max-len": [2, 100, 2, {"ignoreComments":true, "ignoreUrls": true}]
   }
 }
