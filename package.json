@@ -1,6 +1,6 @@
 {
   "name": "make-reducer",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "Functions to easily build redux reducers without boilerplate code.",
   "main": "lib/index.js",
   "scripts": {
@@ -40,5 +40,8 @@
     "isparta": "^4.0.0",
     "mocha": "^2.3.4",
     "redux": "^3.0.6"
+  },
+  "dependencies": {
+    "snake-case": "^1.1.2"
   }
 }
