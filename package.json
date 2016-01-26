@@ -4,7 +4,7 @@
   "description": "Functions to easily build redux reducers without boilerplate code.",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint --ext .js src",
+    "lint": "eslint src",
     "babel": "babel src --out-dir lib",
     "coverage": "babel-node -r node_modules/isparta/lib/cli cover --root src --include-all-sources --report lcov --report html node_modules/mocha/bin/_mocha -- test",
     "coverage-check": "node node_modules/isparta/node_modules/istanbul/lib/cli check-coverage --statements 100 --functions 100 --branches 100 --lines 100",
