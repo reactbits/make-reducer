@@ -22,8 +22,8 @@ describe('with makeReducer', () => {
 	it('you can use named functions', () => {
 		const initialState = 0;
 		const reducer = makeReducer(initialState);
-		const increment = reducer.on(function INCREMENT(counter) { return counter + 1; });
-		const decrement = reducer.on(function DECREMENT(counter) { return counter - 1; });
+		const increment = reducer.on(function INCREMENT(counter) { return counter + 1; }); // eslint-disable-line
+		const decrement = reducer.on(function DECREMENT(counter) { return counter - 1; }); // eslint-disable-line
 
 		const store = createStore(reducer, initialState);
 
@@ -55,8 +55,12 @@ describe('with makeReducer', () => {
 
 	it('import counter handlers', () => {
 		const initialState = 0;
-		const reducer = makeReducer(initialState, counterHandlers);
+		const handlers = { ...counterHandlers };
+		const reducer = makeReducer(initialState, handlers);
 		const store = createStore(reducer, initialState);
+
+		expect(handlers.increment).to.be.a('function');
+		expect(handlers.decrement).to.be.a('function');
 
 		store.dispatch({ type: 'INCREMENT', payload: 1 });
 		expect(store.getState()).to.be(1);

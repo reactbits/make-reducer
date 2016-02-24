@@ -92,16 +92,19 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 		return makeActionCreator(actionType, payloadReducer, metaReducer);
 	};
 
-	// TODO remove or deprecate this API
-	reducer.add = reducer.on;
-
 	if (typeof handlers === 'object') {
-		Object.keys(handlers).forEach(name => {
+		const creators = {};
+		for (const name in handlers) {
+			if (!handlers.hasOwnProperty(name)) continue;
 			const value = handlers[name];
-			if (typeof value !== 'function') return;
+			if (typeof value !== 'function') continue;
 			const type = snakeCase(name).toUpperCase();
-			reducer.on(type, value);
-		});
+			creators[name] = reducer.on(type, value);
+		}
+		for (const name in creators) {
+			if (!handlers.hasOwnProperty(name)) continue;
+			handlers[name] = creators[name]; // eslint-disable-line
+		}
 	}
 
 	return reducer;
