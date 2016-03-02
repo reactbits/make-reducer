@@ -1,20 +1,15 @@
 import snakeCase from 'snake-case';
-
-function identity(t) { return t; }
-
-function isFunction(t) {
-	return typeof t === 'function';
-}
+import _ from 'lodash';
 
 function isFrozen(t) {
-	if (isFunction(Object.isFrozen)) {
+	if (_.isFunction(Object.isFrozen)) {
 		return Object.isFrozen(t);
 	}
 	return false;
 }
 
 function freeze(t) {
-	if (isFunction(Object.freeze)) {
+	if (_.isFunction(Object.freeze)) {
 		Object.freeze(t);
 	}
 }
@@ -65,9 +60,9 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 	 * @param {function} [metaCreator] (optional) A function to transform multiple arguments as a unique metadata object.
 	 * @return {function} A function to create action (aka action creator).
 	 */
-	function makeActionCreator(type, payloadReducer = identity, metaReducer) {
+	function makeActionCreator(type, payloadReducer = _.identity, metaReducer) {
 		const actionType = completeActionType(type);
-		const hasMeta = isFunction(metaReducer);
+		const hasMeta = _.isFunction(metaReducer);
 
 		return (...args) => {
 			const action = {
@@ -103,10 +98,10 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 	 *
 	 * @return {function} A function to create action (aka action creator).
 	 */
-	reducer.on = function on(type, transition, payloadReducer = identity, metaReducer) {
+	reducer.on = function on(type, transition, payloadReducer = _.identity, metaReducer) {
 		let handler = transition;
 		let actionType = type;
-		if (isFunction(type)) {
+		if (_.isFunction(type)) {
 			handler = type;
 			if (!handler.name) {
 				throw new Error('unexpected anonymous transition function');
@@ -118,7 +113,7 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 			throw new Error('action type is not defined');
 		}
 
-		if (!isFunction(handler)) {
+		if (!_.isFunction(handler)) {
 			throw new Error('transition is not a function');
 		}
 
@@ -132,7 +127,7 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 		for (const name in handlers) {
 			if (!handlers.hasOwnProperty(name)) continue;
 			const value = handlers[name];
-			if (!isFunction(value)) continue;
+			if (!_.isFunction(value)) continue;
 			const type = snakeCase(name).toUpperCase();
 			creators[name] = reducer.on(type, value);
 		}
@@ -155,30 +150,29 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
  * @return {function} A reducer function that dispatches action to appropriate reducer depending on action type prefix.
  */
 export function makePrefixMapReducer(...reducers) {
-	if (reducers.some(r => !isFunction(r))) {
+	if (reducers.some(r => !_.isFunction(r))) {
 		throw new Error('all arguments must be a function');
 	}
 
 	const initAction = { type: '@@redux/INIT' };
 	const initialState = reducers.reduce((a, r) => Object.assign(a, r(undefined, initAction)), {});
 
-	const map = reducers.reduce((a, r, i) => {
+	function prefixOf(r, i) {
 		// TODO warning about foreign reducers
-		const p = isFunction(r.getPrefix) ? r.getPrefix() : `@@FOREIGN${i}`;
-		if (!p) {
-			return a;
+		const p = _.isFunction(r.getPrefix) ? r.getPrefix() : `@@FOREIGN${i}`;
+		if (p && p.charAt(p.length - 1) === '/') {
+			return p.substr(0, p.length - 1);
 		}
-		if (p.charAt(p.length - 1) === '/') {
-			return { ...a, [p.substr(0, p.length - 1)]: r };
-		}
-		return { ...a, [p]: r };
-	}, {});
+		return p;
+	}
+
+	const reducerMap = reducers.reduce((a, r, i) => ({ ...a, [prefixOf(r, i)]: r }), {});
 
 	const reducer = function reducer(state = initialState, action) {
 		const i = action.type.indexOf('/');
 		const prefix = i >= 0 ? action.type.substring(0, i) : '';
 		if (prefix) {
-			const fn = map[prefix];
+			const fn = reducerMap[prefix];
 			return fn(state, action);
 		}
 		// TODO try to dispatch foreign reducers
