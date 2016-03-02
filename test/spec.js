@@ -1,4 +1,4 @@
-import makeReducer from '../src/';
+import makeReducer, { makePrefixMapReducer } from '../src/';
 import { createStore } from 'redux';
 import expect from 'expect.js';
 import * as counterHandlers from './counterHandlers';
@@ -67,5 +67,22 @@ describe('with makeReducer', () => {
 
 		store.dispatch({ type: 'DECREMENT', payload: 1 });
 		expect(store.getState()).to.be(0);
+	});
+});
+
+describe('makePrefixMapReducer', () => {
+	it('should dispatch action to appropriate reducer', () => {
+		const actions1 = { set(state, value) { return { value1: value }; } };
+		const r1 = makeReducer({ value1: 1 }, actions1, 'R1/');
+		const actions2 = { set(state, value) { return { value2: value }; } };
+		const r2 = makeReducer({ value2: 2 }, actions2, 'R2');
+		const reducer = makePrefixMapReducer(r1, r2);
+		const state1 = reducer.getInitialState();
+		expect(state1.value1).to.be(1);
+		expect(state1.value2).to.be(2);
+		const state2 = reducer(state1, actions1.set(3));
+		expect(state2.value1).to.be(3);
+		const state3 = reducer(state2, actions2.set(4));
+		expect(state3.value2).to.be(4);
 	});
 });

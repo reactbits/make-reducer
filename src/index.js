@@ -2,6 +2,23 @@ import snakeCase from 'snake-case';
 
 function identity(t) { return t; }
 
+function isFunction(t) {
+	return typeof t === 'function';
+}
+
+function isFrozen(t) {
+	if (isFunction(Object.isFrozen)) {
+		return Object.isFrozen(t);
+	}
+	return false;
+}
+
+function freeze(t) {
+	if (isFunction(Object.freeze)) {
+		Object.freeze(t);
+	}
+}
+
 /**
  * Creates reducer function that returns the next state tree, given
  * the current state tree and the action to handle.
@@ -23,6 +40,24 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 		return fn(state, action.payload, action.error);
 	};
 
+	reducer.getPrefix = function getPrefix() {
+		return actionTypePrefix;
+	};
+
+	/**
+	 * Gets initial state.
+	 * @return {object} A copy of initial state.
+	 */
+	reducer.getInitialState = function getInitialState() {
+		return { ...initialState };
+	};
+
+	function completeActionType(type) {
+		if (!actionTypePrefix) return type;
+		const s = actionTypePrefix.indexOf('/') >= 0 ? '' : '/';
+		return `${actionTypePrefix}${s}${type}`;
+	}
+
 	/**
 	 * Makes function to create action.
 	 * @param  {string} [type] Action type.
@@ -31,8 +66,8 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 	 * @return {function} A function to create action (aka action creator).
 	 */
 	function makeActionCreator(type, payloadReducer = identity, metaReducer) {
-		const actionType = actionTypePrefix + type;
-		const hasMeta = typeof metaReducer === 'function';
+		const actionType = completeActionType(type);
+		const hasMeta = isFunction(metaReducer);
 
 		return (...args) => {
 			const action = {
@@ -71,7 +106,7 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 	reducer.on = function on(type, transition, payloadReducer = identity, metaReducer) {
 		let handler = transition;
 		let actionType = type;
-		if (typeof type === 'function') {
+		if (isFunction(type)) {
 			handler = type;
 			if (!handler.name) {
 				throw new Error('unexpected anonymous transition function');
@@ -83,11 +118,11 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 			throw new Error('action type is not defined');
 		}
 
-		if (typeof handler !== 'function') {
+		if (!isFunction(handler)) {
 			throw new Error('transition is not a function');
 		}
 
-		transitions[actionTypePrefix + actionType] = handler;
+		transitions[completeActionType(actionType)] = handler;
 
 		return makeActionCreator(actionType, payloadReducer, metaReducer);
 	};
@@ -97,15 +132,62 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 		for (const name in handlers) {
 			if (!handlers.hasOwnProperty(name)) continue;
 			const value = handlers[name];
-			if (typeof value !== 'function') continue;
+			if (!isFunction(value)) continue;
 			const type = snakeCase(name).toUpperCase();
 			creators[name] = reducer.on(type, value);
 		}
-		for (const name in creators) {
-			if (!handlers.hasOwnProperty(name)) continue;
-			handlers[name] = creators[name]; // eslint-disable-line
+
+		if (!isFrozen(handlers)) {
+			for (const name in creators) {
+				if (!handlers.hasOwnProperty(name)) continue;
+				handlers[name] = creators[name]; // eslint-disable-line
+			}
+			freeze(handlers);
 		}
 	}
+
+	return reducer;
+}
+
+/**
+ * Combines reducers into reducer that dispatches action to appropriate reducer depending on action type prefix.
+ * @param  {functions} ...reducers List of reducer functions to dispatch.
+ * @return {function} A reducer function that dispatches action to appropriate reducer depending on action type prefix.
+ */
+export function makePrefixMapReducer(...reducers) {
+	if (reducers.some(r => !isFunction(r))) {
+		throw new Error('all arguments must be a function');
+	}
+
+	const initAction = { type: '@@redux/INIT' };
+	const initialState = reducers.reduce((a, r) => Object.assign(a, r(undefined, initAction)), {});
+
+	const map = reducers.reduce((a, r, i) => {
+		// TODO warning about foreign reducers
+		const p = isFunction(r.getPrefix) ? r.getPrefix() : `@@FOREIGN${i}`;
+		if (!p) {
+			return a;
+		}
+		if (p.charAt(p.length - 1) === '/') {
+			return { ...a, [p.substr(0, p.length - 1)]: r };
+		}
+		return { ...a, [p]: r };
+	}, {});
+
+	const reducer = function reducer(state = initialState, action) {
+		const i = action.type.indexOf('/');
+		const prefix = i >= 0 ? action.type.substring(0, i) : '';
+		if (prefix) {
+			const fn = map[prefix];
+			return fn(state, action);
+		}
+		// TODO try to dispatch foreign reducers
+		return state;
+	};
+
+	reducer.getInitialState = function getInitialState() {
+		return { ...initialState };
+	};
 
 	return reducer;
 }
