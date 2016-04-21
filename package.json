@@ -35,7 +35,7 @@
     "codecov.io": "^0.1.6",
     "eslint": "^2.5.1",
     "eslint-config-airbnb": "^7.0.0",
-    "eslint-plugin-jsx-a11y": "^1.0.1",
+    "eslint-plugin-jsx-a11y": "^1.0.2",
     "eslint-plugin-react": "^5.0.1",
     "expect.js": "^0.3.1",
     "isparta": "^4.0.0",
