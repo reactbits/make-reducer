@@ -124,19 +124,17 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 
 	if (typeof handlers === 'object') {
 		const creators = {};
-		for (const name in handlers) {
-			if (!handlers.hasOwnProperty(name)) continue;
-			const value = handlers[name];
-			if (!_.isFunction(value)) continue;
+		const canFreeze = !isFrozen(handlers);
+		_.forOwn(handlers, (value, name) => {
+			if (!_.isFunction(value)) return;
 			const type = snakeCase(name).toUpperCase();
 			creators[name] = reducer.on(type, value);
-		}
-
-		if (!isFrozen(handlers)) {
-			for (const name in creators) {
-				if (!handlers.hasOwnProperty(name)) continue;
+			if (canFreeze) {
 				handlers[name] = creators[name]; // eslint-disable-line
 			}
+		});
+
+		if (canFreeze) {
 			freeze(handlers);
 		}
 	}
