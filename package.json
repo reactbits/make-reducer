@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "lodash": "^4.12.0",
-    "snake-case": "^1.1.2"
+    "snake-case": "^2.1.0"
   }
 }
