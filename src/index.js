@@ -14,6 +14,13 @@ function freeze(t) {
 	}
 }
 
+// Wraps the handler function to allow returning only state diff.
+function wrapHandler(handler) {
+	return function (state, ...args) {
+		return _.assign({}, state, handler(state, ...args));
+	};
+}
+
 /**
  * Creates reducer function that returns the next state tree, given
  * the current state tree and the action to handle.
@@ -25,6 +32,7 @@ function freeze(t) {
  * @return {function} A reducer function to use with Redux store.
  */
 export default function makeReducer(initialState, handlers = {}, actionTypePrefix = '') {
+	const wrapHandlers = _.isObject(initialState);
 	const transitions = {};
 
 	const reducer = function reducer(state = initialState, action) {
@@ -117,7 +125,7 @@ export default function makeReducer(initialState, handlers = {}, actionTypePrefi
 			throw new Error('transition is not a function');
 		}
 
-		transitions[completeActionType(actionType)] = handler;
+		transitions[completeActionType(actionType)] = wrapHandlers ? wrapHandler(handler) : handler;
 
 		return makeActionCreator(actionType, payloadReducer, metaReducer);
 	};

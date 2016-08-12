@@ -68,6 +68,23 @@ describe('with makeReducer', () => {
 		store.dispatch({ type: 'DECREMENT', payload: 1 });
 		expect(store.getState()).to.be(0);
 	});
+
+	it('auto wrapping handlers', () => {
+		const initialState = { count: 0 };
+
+		const reducer = makeReducer(initialState, {
+			increment: state => ({ count: ++state.count }),
+			decrement: state => ({ count: --state.count }),
+		});
+
+		const store = createStore(reducer, initialState);
+
+		store.dispatch({ type: 'INCREMENT', payload: 1 });
+		expect(store.getState()).to.eql({ count : 1 });
+
+		store.dispatch({ type: 'DECREMENT', payload: 1 });
+		expect(store.getState()).to.eql({ count : 0 });
+	});
 });
 
 describe('makePrefixMapReducer', () => {
