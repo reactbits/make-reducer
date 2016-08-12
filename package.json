@@ -1,6 +1,6 @@
 {
   "name": "make-reducer",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "description": "Functions to easily build redux reducers without boilerplate code.",
   "main": "lib/index.js",
   "scripts": {
