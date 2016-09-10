@@ -30,11 +30,11 @@
     "expect.js": "^0.3.1",
     "isparta": "^4.0.0",
     "mocha": "^3.0.2",
-    "react-devpack": "^0.1.57",
+    "react-devpack": "^0.1.58",
     "redux": "^3.6.0"
   },
   "dependencies": {
-    "lodash": "^4.14.2",
+    "lodash": "^4.15.0",
     "snake-case": "^2.1.0"
   }
 }
