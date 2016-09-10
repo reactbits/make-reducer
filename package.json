@@ -6,8 +6,7 @@
   "scripts": {
     "lint": "eslint src",
     "babel": "babel src --out-dir lib",
-    "coverage": "babel-node -r node_modules/isparta/lib/cli cover --root src --include-all-sources --report lcov --report html --report json node_modules/mocha/bin/_mocha -- test",
-    "coverage-check": "node node_modules/isparta/node_modules/istanbul/lib/cli check-coverage --statements 100 --functions 100 --branches 100 --lines 100",
+    "coverage": "babel-node -r node_modules/isparta/lib/cli cover --root src --include-all-sources --report html --report json node_modules/mocha/bin/_mocha -- test",
     "codecov": "cat ./coverage/coverage.json | ./node_modules/codecov.io/bin/codecov.io.js",
     "test": "npm run lint && npm run coverage && npm run codecov"
   },
