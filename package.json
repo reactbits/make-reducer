@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "eslint src",
     "babel": "babel src --out-dir lib",
-    "coverage": "babel-node -r node_modules/isparta/lib/cli cover --root src --include-all-sources --report html --report json node_modules/mocha/bin/_mocha -- test",
-    "codecov": "cat ./coverage/coverage.json | ./node_modules/codecov.io/bin/codecov.io.js",
+    "coverage": "node_modules/.bin/nyc --reporter=json node_modules/mocha/bin/_mocha --opts test/mocha.opts -- test",
+    "codecov": "node_modules/.bin/codecov -f coverage/coverage-final.json",
     "test": "npm run lint && npm run coverage && npm run codecov"
   },
   "repository": {
@@ -29,11 +29,12 @@
     "expect.js": "^0.3.1",
     "isparta": "^4.0.0",
     "mocha": "^3.2.0",
-    "react-devpack": "^0.2.2",
+    "nyc": "^10.0.0",
+    "react-devpack": "^0.2.4",
     "redux": "^3.6.0"
   },
   "dependencies": {
-    "lodash": "^4.17.0",
+    "lodash": "^4.17.2",
     "snake-case": "^2.1.0"
   }
 }
