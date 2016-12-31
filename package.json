@@ -34,7 +34,7 @@
     "redux": "^3.6.0"
   },
   "dependencies": {
-    "lodash": "^4.17.3",
+    "lodash": "^4.17.4",
     "snake-case": "^2.1.0"
   }
 }
